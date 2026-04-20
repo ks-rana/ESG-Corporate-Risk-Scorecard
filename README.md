@@ -1,147 +1,122 @@
-# AI Governance Audit Framework
+# ESG Corporate Risk Scorecard
 
-> **Live Tool →** [https://ai-governance-audit-9abmdtb9a4zsyrffdqzkbc.streamlit.app/](https://ai-governance-audit-9abmdtb9a4zsyrffdqzkbc.streamlit.app/)
+> **Live Tool →** [https://esg-corporate-risk-scorecard-2oky9ixncf9k384hvmantw.streamlit.app/](https://esg-corporate-risk-scorecard-2oky9ixncf9k384hvmantw.streamlit.app/)
 > *(Hosted on Streamlit Cloud — may take ~30s to wake up on first load)*
 
 ---
 
 ## What This Is
 
-An interactive AI governance audit tool that evaluates AI systems across **6 domains and 30 questions**, estimates a Canada AIA Impact Level (1–4), and generates a compliance report with a cross-regulatory reference matrix and sign-off block.
-
-This is not a general-purpose framework — it is specifically designed for the **Canadian regulatory context**, incorporating the Treasury Board Secretariat's Algorithmic Impact Assessment (AIA) methodology, OSFI Guideline E-23 (2027), PIPEDA, and the Canadian Human Rights Act alongside international standards (EU AI Act, NIST AI RMF, ISO 42001).
+An interactive ESG (Environmental, Social, Governance) risk scorecard that evaluates organizations across **20 criteria** using **sector-adjusted materiality weights**. Select your sector and the weighting shifts automatically — Financial Services prioritizes Governance, Energy prioritizes Environmental. The tool produces a radar chart, domain breakdown, sector-specific risk cards, and a downloadable report.
 
 ---
 
-## Why It Was Built
+## Why Sector-Adjusted Weights Matter
 
-Most AI governance tools produce a flat score. Canadian regulators and financial institutions want something more specific: a **Raw Impact Score**, a **Mitigation Score**, an estimated **AIA Level**, a mapping to specific regulatory clauses, and a plan for what to measure after deployment.
+ESG is not one-size-fits-all. A bank's most material ESG risk is not its carbon footprint — it's the governance of the models it uses to make credit decisions, and the social impact of who gets access to capital. An energy company's biggest risk is stranded assets from the climate transition.
 
-This tool automates all of that — producing an artifact that a Risk Officer, Privacy Officer, or AIA Peer Reviewer could actually use as a starting document.
-
----
-
-## The 6 Domains
-
-| # | Domain | Weight | Frameworks |
-|---|---|---|---|
-| 1 | Transparency & Explainability | 18% | EU AI Act Art. 13 · NIST AI RMF MAP · ISO 42001 §8.4 · AIA Level 2+ |
-| 2 | Fairness & Non-Discrimination | 20% | EU AI Act Art. 10 · NIST MEASURE · AIA GBA+ · Canadian Human Rights Act |
-| 3 | Accountability & Oversight | 20% | OSFI E-23 §4 · NIST GOVERN · ISO 42001 §5.3 · AIA Level 2+ |
-| 4 | Security & Robustness | 16% | NIST MANAGE · ISO 42001 §8.5 · EU AI Act Art. 15 · OSFI B-13 |
-| 5 | Privacy & Data Governance | 16% | PIPEDA · ISO 42001 §8.3 · OSFI E-23 §6 · AIA Privacy §50–59 |
-| 6 | **OSFI E-23 — Model Risk Management** | 10% | OSFI E-23 §1–9 · OSFI B-13 · OSFI B-10 |
-
-Domain 6 is specific to federally regulated financial institutions (FRFIs). Non-OSFI organizations should mark those questions N/A.
+This tool operationalizes that insight using **SASB (Sustainability Accounting Standards Board) materiality** — a widely adopted framework that defines which ESG topics are financially significant by industry sector. Flat ESG scores without sector adjustment produce misleading comparisons. This tool doesn't make that mistake.
 
 ---
 
-## Key Features
+## The 3 Pillars
 
-### Canada AIA Proxy Scoring
-Each response contributes to a weighted **Raw Impact Score** and **Mitigation Score**:
-- `No — not addressed` → adds to Raw Score (gap increases risk level)
-- `Partially — in progress` → partial Raw Score addition + partial Mitigation credit
-- `Yes — fully in place` → full Mitigation credit
+### Environmental (E)
+Aligned to TCFD, GRI 300 series, and OSFI B-15 (Climate Risk Management).
 
-**Estimated Impact Level thresholds:**
-| Raw Score | Level | Label |
+| Question | Materiality | Why It Matters |
 |---|---|---|
-| < 30 | 1 | Minimal |
-| 30–49 | 2 | Moderate |
-| 50–69 | 3 | Significant |
-| ≥ 70 | 4 | High |
+| Scope 1, 2, and 3 GHG emissions disclosure | High | Scope 3 is typically 70%+ of total emissions; without it, climate picture is incomplete. Required under TCFD and EU CSRD. |
+| Science-based emissions reduction targets (SBTi) | High | Targets not validated by SBTi are increasingly flagged as greenwashing by regulators and investors. |
+| TCFD-aligned climate risk assessment | High | Assesses both physical risks (floods) and transition risks (policy). Increasingly mandatory in major markets. |
+| Water usage and reduction targets | Medium | Sector-specific but growing in materiality; relevant to agriculture, manufacturing, tech. |
+| Supply chain environmental risk assessment | Medium | Many companies' largest environmental impacts sit in their supplier network — required under Germany's Supply Chain Act, EU CSRD. |
+| Net-zero pathway credibility | High | Interim targets, clear methodology, third-party verification. "Net-zero by 2050" without milestones is insufficient. |
+| Biodiversity and land-use impact | Low | Emerging frontier driven by TNFD and COP15. Early disclosure signals forward-thinking governance. |
 
-Each level's mandatory Canadian requirements are displayed — notice requirements, explanation standards, peer review obligations, GBA+ assessment, human oversight, and approval authority.
+### Social (S)
+Aligned to GRI 400 series, ILO Core Conventions, and UN SDGs 8 and 10.
 
-### OSFI E-23 Domain (Domain 6)
-Five questions specific to federally regulated financial institutions:
-1. **Model Inventory** — unique ID and designated owner per E-23 §1.1
-2. **Independent Validation** — methodology validated by party independent of developers per §2.1
-3. **Breach Thresholds** — performance drift triggers defined per §7
-4. **Scope Controls** — model use limited to approved purpose per §3.2
-5. **Change Management** — formal process for all model updates per §8
+| Question | Materiality | Why It Matters |
+|---|---|---|
+| Pay equity and gender diversity data by seniority | High | EU Pay Transparency Directive now mandates this. Proxy advisors use it to assess culture and retention risk. |
+| Human rights due diligence in supply chain | High | Mandatory under France's Loi de Vigilance, Germany's Supply Chain Act, EU CSRD. UN Guiding Principles standard. |
+| Health, safety, and wellbeing policy with metrics | Medium | Injury rates and lost-time incidents signal management quality. Investors treat H&S data as a proxy for operational discipline. |
+| Employee grievance mechanism | Medium | Baseline expectation under UN Guiding Principles and GRI 402. Absence is a governance red flag in labour-intensive sectors. |
+| Community investment and local impact | Low | Social licence to operate — directly affects operating permissions and brand trust in extractive/infrastructure sectors. |
+| Supplier labour standards with third-party audits | High | Unverified supplier commitments are legally insufficient after high-profile supply chain scandals. |
 
-### AIA-Specific Privacy Questions
-- **AIA Q55** — Has a formal Privacy Impact Assessment been completed or initiated?
-- **AIA Q58** — Will personal information be de-identified at any point in the system lifecycle?
+### Governance (G)
+Aligned to GRI 200 series, OECD Corporate Governance Principles, and TCFD Governance pillar.
 
-### Compliance Matrix
-Every question is mapped to its source regulatory clause — shown inline on each question card and as a full expandable table in the results. Every finding can be traced to a specific AIA section, OSFI clause, or ISO/NIST reference.
+| Question | Materiality | Why It Matters |
+|---|---|---|
+| Board-level ESG oversight with named responsibility | High | TCFD requires board-level accountability. Investors vote against boards that cannot demonstrate ESG governance. |
+| Executive compensation linked to ESG metrics | High | Without this link, ESG goals are PR — not business objectives. ISS and Glass Lewis flag absence as governance concern. |
+| Anti-corruption policies with breach data disclosure | High | Disclosing actual breach data, not just the policy, is the real test of governance quality. |
+| Board diversity across gender, background, expertise | Medium | Diversity linked to better decisions and reduced groupthink. Skills matrix signals ESG expertise at board level. |
+| Third-party ESG assurance or verification | High | Without assurance, ESG disclosures are self-reported and unverifiable. Becoming mandatory under CSRD for large companies. |
+| Lobbying and political donations disclosure | Medium | Tests whether public ESG commitments align with political influence activities. |
+| Formal stakeholder engagement for materiality | Medium | GRI and SASB require structured engagement as the basis for materiality assessments. Ad hoc engagement is insufficient. |
 
-### KPI Blueprint
-After assessment, a **Governance KPI Blueprint** is generated with 16 KPIs across three phases, filtered to the user's estimated AIA level. Each KPI includes:
-- Plain-language name and why it matters
-- Formula with target thresholds
-- Alert flag with specific trigger numbers
-- Regulatory reference
+---
 
-**Pre-Deployment KPIs** (establish before go-live):
-- Data Completeness Rate
-- Proxy Correlation Score
-- Training Data Bias Score
-- PII De-identification Coverage
-- Model Inventory Completeness
+## Sector-Adjusted Materiality Weights
 
-**Post-Deployment KPIs** (measure after launch):
-- Disparate Impact Ratio (4/5 Rule — Canadian Human Rights Act)
-- Explainability Coverage
-- Human Override Rate (with both failure modes explained)
-- False Negative Rate by Demographic
-- Recourse Utilization Rate
+Weights shift automatically when you select your sector. Aligned to SASB materiality maps.
 
-**Continuous KPIs** (never stop measuring):
-- Model Drift Velocity (Population Stability Index)
-- Mean Time to Detect Bias (MTTD)
-- Audit Trail Completeness
-- Model Inventory Currency
-- PII Exposure Incidents
-- GBA+ Re-assessment Frequency
-
-### Ticket-Based Findings
-Findings are presented as structured issue tickets with:
-- Unique IDs (`GOV-TE-001`, `GOV-FA-002`, etc.)
-- Severity badge (Critical / High / Medium / Low)
-- Domain and status (Gap / Partial)
-- Why-it-matters explanation
-- Specific Canadian regulatory context
-
-### Compliance Report Export
-A downloadable `.txt` report containing:
-1. Canada AIA proxy assessment (Raw Score, Mitigation Score, Level, mandatory requirements)
-2. Governance framework scores by domain
-3. Full response log (all 30 questions)
-4. Findings (all tickets)
-5. Recommendations (domain-specific, Canadian-framed)
-6. KPI Blueprint (filtered by AIA level)
-7. Compliance matrix
-8. Three-party sign-off block:
-   - **Model Risk Officer** (OSFI E-23 §4)
-   - **Chief Privacy Officer** (PIPEDA / AIA Privacy)
-   - **AIA Peer Reviewer** (AIA Level 2 §Peer Review) — includes "Review Published" field with URL line
+| Sector | E | S | G |
+|---|---|---|---|
+| Financial Services | 25% | 30% | 45% |
+| Energy & Utilities | 50% | 25% | 25% |
+| Technology | 25% | 35% | 40% |
+| Healthcare | 20% | 45% | 35% |
+| Manufacturing | 45% | 30% | 25% |
+| Consumer Goods/Retail | 35% | 35% | 30% |
+| Real Estate | 40% | 25% | 35% |
+| Telecommunications | 25% | 35% | 40% |
 
 ---
 
 ## Scoring Methodology
 
-| Response | Score Value | AIA Effect |
-|---|---|---|
-| Yes — fully in place | 1.0 | Full Mitigation credit |
-| Partially — in progress | 0.5 | Partial credit in both |
-| No — not addressed | 0.0 | Adds to Raw Impact Score |
-| Not applicable | excluded | No effect |
+| Response | Value |
+|---|---|
+| Yes — fully disclosed | 1.0 |
+| Partially — in progress | 0.5 |
+| No — not addressed | 0.0 |
+| Not applicable | excluded from average |
 
-**Overall Score** = weighted average across 6 domains  
-**AIA Level** = estimated from proxy Raw Impact Score using GC Directive thresholds  
-**Ratings:** 80–100 Strong · 60–79 Adequate · 40–59 Needs Work · <40 High Risk
+**Pillar score** = average of scored responses × 100  
+**Overall score** = sector-weighted average using SASB materiality  
+**Ratings:** 80–100 Leading · 60–79 Developing · 40–59 Lagging · <40 At Risk
+
+---
+
+## Key Features
+
+- **Step-by-step assessment** — work through each pillar sequentially with live domain score tracking
+- **Plain-language explanations** — every question includes a "Why this matters" section explaining the regulatory and business case
+- **Sector-specific risk cards** — results surface the top 3 ESG material risks for your selected sector
+- **Radar chart** — visual overview of E, S, G balance at a glance
+- **Domain bar chart** — pillar-by-pillar breakdown with colour-coded ratings
+- **Downloadable report (.txt)** — company metadata, pillar scores, sector weights, full response log, findings, and priority recommendations
+
+---
+
+## Canadian Regulatory Context
+
+The Governance pillar and sector weighting logic are particularly relevant for Canadian financial institutions:
+
+- **OSFI B-15 (Climate Risk Management)** — banks and insurers are expected to assess physical and transition climate risk. The Environmental pillar's TCFD questions directly map to B-15 expectations.
+- **OSFI E-23** — model governance is a Governance ESG criterion. A bank that cannot demonstrate board-level accountability for its AI models has a Governance gap under both OSFI E-23 and SASB Financial Services materiality.
+- **TCFD** — now mandatory for large Canadian public companies under CSA climate disclosure rules.
 
 ---
 
 ## Regulatory Disclaimer
 
-This tool is an educational reference. It does not constitute a formal AIA submission, legal opinion, or OSFI supervisory determination. For real automated decision systems:
-- Complete the official AIA at [canada.ca/aia-tool](https://canada.ca/aia-tool)
-- For OSFI-regulated institutions, engage your Model Risk Officer and consult OSFI Guidelines E-23 and B-13
+This scorecard is an educational reference tool. It is not a formal ESG rating, investment recommendation, or regulatory compliance determination. Scores are based on self-reported inputs only. For investment, procurement, or governance decisions, engage a qualified ESG analyst and verify using primary sources (CDP disclosures, company sustainability reports, MSCI ESG, Sustainalytics).
 
 ---
 
@@ -151,17 +126,15 @@ This tool is an educational reference. It does not constitute a formal AIA submi
 |---|---|
 | Python | Core language |
 | Streamlit | Web application framework |
-| Plotly | Radar chart, domain bar chart |
-
-No additional dependencies beyond base Streamlit.
+| Plotly | Radar chart, bar chart, sector visualizations |
 
 ---
 
 ## Running Locally
 
 ```bash
-git clone https://github.com/ks-rana/ai-governance-audit.git
-cd ai-governance-audit
+git clone https://github.com/ks-rana/ESG-Corporate-Risk-Scorecard.git
+cd ESG-Corporate-Risk-Scorecard
 pip install streamlit plotly
 streamlit run app.py
 ```
@@ -172,6 +145,6 @@ streamlit run app.py
 
 Built by **Khushi Rana** — Psychology × AI Governance, University of Waterloo. Currently AI Risk Governance Intern at Rogers Communications.
 
-This framework was stress-tested against real-world AIA disclosures (including IRCC's International Student Program AIA, Impact Level 2) to verify scoring accuracy and ensure the Canadian regulatory context is accurate.
+The sector-adjusted weighting logic was built to address a gap in most ESG tools: a flat score without materiality context is not useful for decision-making. This tool asks *what matters for this industry* before scoring anything.
 
 [LinkedIn](https://www.linkedin.com/in/khushi-rana-00764223a) · [Portfolio](https://khushi-rana-website.vercel.app/)
