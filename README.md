@@ -3,7 +3,9 @@
 A sector-adjusted ESG (Environmental, Social, Governance) risk scoring tool that uses SASB materiality weights to produce ESG ratings appropriate to the industry being scored. A financial services company is weighted toward governance, an energy company toward environmental, a consumer goods company toward social — reflecting what SASB identifies as financially material in each sector. TCFD-aligned for climate disclosure structure, with GRI Standards as the underlying disclosure framework.
 
 **Live tool:** https://esg-corporate-risk-scorecard-2oky9ixncf9k384hvmantw.streamlit.app  
-*(Hosted on Streamlit Community Cloud — may take 30 seconds to load on first visit.)*
+*(Hosted on Streamlit Community Cloud — may take 30 seconds to load on first visit. Use the "View a sample scorecard" button on the landing screen to jump straight to a scored example.)*
+
+![ESG Corporate Risk Scorecard — results screen](assets/screenshot.png)
 
 ---
 
@@ -36,7 +38,7 @@ The scoring architecture is mine. I designed:
 
 ## What I did not build from scratch
 
-The Python/Streamlit implementation was built using AI-assisted development. The code captures inputs, applies the weighting logic I designed, and renders the score. The technical implementation is straightforward Streamlit; the originality lives in the sector-adjustment methodology, the question architecture, and the standards integration.
+I designed the sector-adjustment methodology, the question architecture, and the standards integration. The Python/Streamlit implementation was AI-assisted: the code captures inputs, applies the weighting logic I designed, and renders the score.
 
 ---
 
@@ -62,7 +64,7 @@ The plain-language explanation under every question is the deliberate part. Most
 
 ## Disclaimer
 
-This is an educational reference tool, not a formal ESG rating, investment recommendation, or regulatory compliance determination. Scores are based on self-reported inputs only. For real investment, procurement, or governance decisions, engage a qualified ESG analyst and verify against primary sources (CDP disclosures, company sustainability reports, MSCI ESG, Sustainalytics).
+This is an educational reference tool built by a student, based on publicly available frameworks and my own research and interpretation. It is not a formal ESG rating, audit opinion, investment recommendation, legal or financial advice, or a regulatory compliance determination, and it is not affiliated with or endorsed by any standards body or regulator. Scores are based on self-reported inputs only. For real investment, procurement, or governance decisions, consult a qualified professional and verify against primary sources (CDP disclosures, company sustainability reports, MSCI ESG, Sustainalytics).
 
 ---
 

@@ -480,11 +480,33 @@ MATERIAL_RISKS = {
 
 
 # ============================================================
+# SAMPLE COMPANY PRESET — pre-filled demo so the scored output
+# can be viewed without answering all 20 questions
+# ============================================================
+_SAMPLE_CYCLE = ["Yes — fully disclosed", "Partially — in progress",
+                 "Yes — fully disclosed", "No — not addressed"]
+
+def load_sample_scorecard():
+    st.session_state.responses = {
+        p: {f"{p}_{i}": _SAMPLE_CYCLE[i % len(_SAMPLE_CYCLE)] for i in range(len(pdata["questions"]))}
+        for p, pdata in PILLARS.items()
+    }
+    st.session_state.meta.update({"company": "Maplecrest Financial (sample)",
+                                  "assessor": "Pre-filled sample data"})
+    st.session_state.sample_loaded = True
+    st.session_state.step = len(STEPS) - 1
+
+# ============================================================
 # SESSION STATE
 # ============================================================
-for k, v in [("step", 0), ("responses", {}), ("meta", {}), ("show_explain", {})]:
+for k, v in [("step", 0), ("responses", {}), ("meta", {}), ("show_explain", {}), ("sample_loaded", False)]:
     if k not in st.session_state:
         st.session_state[k] = v
+
+# Visiting ?sample=1 loads the pre-filled sample scorecard directly (shareable demo link)
+if "sample" in st.query_params and not st.session_state.get("_sample_qp_done"):
+    st.session_state._sample_qp_done = True
+    load_sample_scorecard()
 
 
 # ============================================================
@@ -568,6 +590,22 @@ def bar_chart(scores):
         margin=dict(l=10,r=10,t=20,b=10), height=270, showlegend=False
     )
     return fig
+
+def build_pdf_bytes(report_text):
+    from fpdf import FPDF
+    pdf = FPDF(format="letter")
+    pdf.set_auto_page_break(auto=True, margin=14)
+    pdf.set_margins(12, 14, 12)
+    pdf.add_page()
+    pdf.set_font("Courier", size=7.5)
+    # Core PDF fonts are latin-1 only — swap the typographic characters used in the report
+    for a, b in [("—","-"),("–","-"),("·","."),("≥",">="),("≤","<="),("×","x"),
+                 ("⚠","!"),("✓","v"),("’","'"),("‘","'"),("“",'"'),("”",'"'),("■","*"),("▶",">")]:
+        report_text = report_text.replace(a, b)
+    report_text = report_text.encode("latin-1", "replace").decode("latin-1")
+    for line in report_text.split("\n"):
+        pdf.multi_cell(0, 3.4, line if line else " ", new_x="LMARGIN", new_y="NEXT")
+    return bytes(pdf.output())
 
 def build_report():
     sc   = overall_score()
@@ -673,6 +711,10 @@ with st.sidebar:
         prefix = "▶ " if i == cur else ("✓ " if i < cur else "○ ")
         st.markdown(f'<p style="font-family:\'DM Mono\',monospace;font-size:0.65rem;color:{c};letter-spacing:1px;margin:3px 0;">{prefix}{s}</p>', unsafe_allow_html=True)
 
+    st.markdown("---")
+    st.markdown('<span class="slabel" style="color:#7a9a5a;">About this tool</span>', unsafe_allow_html=True)
+    st.markdown('<p style="font-size:0.76rem;color:#c8c4b0 !important;line-height:1.7;">Built by Khushi Rana. Educational reference only — not a formal ESG rating.<br><a href="https://github.com/ks-rana/ESG-Corporate-Risk-Scorecard#readme" style="color:#b8d48a;">README, methodology & sources →</a></p>', unsafe_allow_html=True)
+
 
 # ============================================================
 # STEP 0 — WELCOME
@@ -691,8 +733,8 @@ if step == 0:
     st.markdown("""
     <div class="disclaimer">
         <div class="disclaimer-title">⚠ Reference Tool — Not a Formal ESG Rating</div>
-        This scorecard is an <b>educational reference tool</b>. It is not a formal ESG rating, investment recommendation, or regulatory compliance determination. Scores are based on self-reported inputs only.<br><br>
-        For real investment, procurement, or governance decisions, engage a qualified ESG analyst and verify using primary sources (CDP disclosures, company sustainability reports, MSCI ESG, Sustainalytics).
+        This scorecard is an <b>educational reference tool built by a student</b>, based on publicly available frameworks and my own research and interpretation. It is not a formal ESG rating, audit opinion, investment recommendation, legal or financial advice, or a regulatory compliance determination, and it is not affiliated with or endorsed by any standards body or regulator. Scores are based on self-reported inputs only.<br><br>
+        For real investment, procurement, or governance decisions, consult a qualified ESG analyst and verify using primary sources (CDP disclosures, company sustainability reports, MSCI ESG, Sustainalytics).
     </div>
     """, unsafe_allow_html=True)
 
@@ -726,6 +768,17 @@ if step == 0:
         <b>Overall score</b> = sector-weighted average using SASB materiality weights<br>
         <b>Ratings:</b> 80–100 Leading · 60–79 Developing · 40–59 Lagging · Below 40 At Risk
         </p>
+        <p style="font-size:0.83rem;color:#3a3a2a;margin-top:12px;line-height:1.8;">
+        <b>How the sector weights were chosen.</b> SASB's materiality map identifies which disclosure topics are
+        <i>financially material</i> per industry at the issue level — it does not publish pillar-level weights.
+        The Environmental / Social / Governance percentages used here are my own aggregation of that issue-level
+        guidance into three pillar weights per sector, simplified for an educational scorecard: sectors whose
+        material SASB issues cluster in climate and resources (Energy, Manufacturing, Real Estate) weight E highest;
+        sectors where SASB emphasises product safety, access, and labour (Healthcare, Consumer Goods) weight S highest;
+        and sectors where SASB emphasises business ethics, data governance, and systemic risk (Financial Services,
+        Technology, Telecom) weight G highest. The weights are visible in the sidebar and the report so you can
+        disagree with them — that transparency is the point.
+        </p>
         """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -742,11 +795,17 @@ if step == 0:
     """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    _, cb, _ = st.columns([2,1,2])
+    _, cb, cd, _ = st.columns([1.3, 1, 1.2, 1.3])
     with cb:
         if st.button("Begin Assessment →", use_container_width=True):
             st.session_state.step = 1
+            st.session_state.sample_loaded = False
             st.rerun()
+    with cd:
+        if st.button("View a sample scorecard →", use_container_width=True):
+            load_sample_scorecard()
+            st.rerun()
+    st.markdown('<p style="font-size:0.76rem;color:#8a8a6a;text-align:center;margin-top:10px;">The sample loads a pre-filled, illustrative company and jumps straight to the scored output. Clear it with "Start Over".</p>', unsafe_allow_html=True)
 
 
 # ============================================================
@@ -838,6 +897,8 @@ elif step == 4:
 
     st.markdown('<span class="slabel">Results</span>', unsafe_allow_html=True)
     st.markdown("## ESG Risk Scorecard Results")
+    if st.session_state.get("sample_loaded"):
+        st.info("You are viewing a pre-filled **sample scorecard** — the responses are illustrative, not a real assessment. Click \"Start Over\" at the bottom to score your own company.")
     st.markdown("<br>", unsafe_allow_html=True)
 
     cs, cr, cb2 = st.columns([1,1.3,1.3])
@@ -925,7 +986,7 @@ elif step == 4:
     meta        = st.session_state.meta
     fname = f"esg_scorecard_{(meta.get('company') or 'company').lower().replace(' ','_')}_{datetime.today().strftime('%Y%m%d')}.txt"
 
-    tab1, tab2 = st.tabs(["Copy Report", "Download .txt"])
+    tab1, tab2, tab3 = st.tabs(["Copy Report", "Download .txt", "Download .pdf"])
     with tab1:
         st.markdown('<p style="font-size:0.82rem;color:#5a5a3a;margin-bottom:8px;">Click inside the box → Ctrl+A / Cmd+A to select all → Ctrl+C / Cmd+C to copy.</p>', unsafe_allow_html=True)
         st.text_area("", value=report_text, height=360, label_visibility="collapsed")
@@ -933,12 +994,16 @@ elif step == 4:
         st.markdown('<p style="font-size:0.82rem;color:#5a5a3a;margin-bottom:12px;">Downloads as .txt — open in Word (File → Open) or any text editor.</p>', unsafe_allow_html=True)
         st.download_button("⬇  Download Report (.txt)", data=report_text.encode("utf-8"),
                            file_name=fname, mime="text/plain", use_container_width=True)
+    with tab3:
+        st.download_button("⬇  Download Report (.pdf)", data=build_pdf_bytes(report_text),
+                           file_name=fname.replace(".txt", ".pdf"), mime="application/pdf", use_container_width=True)
 
     col_r, _ = st.columns([1,4])
     with col_r:
         if st.button("↺  Start Over", use_container_width=True):
             st.session_state.step = 0
             st.session_state.responses = {}
+            st.session_state.sample_loaded = False
             st.rerun()
 
     st.markdown("""
